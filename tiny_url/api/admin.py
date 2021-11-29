@@ -1,3 +1,5 @@
 from django.contrib import admin
+from api.models import TinyUrl
 
-# Register your models here.
+
+admin.site.register(TinyUrl)
