@@ -2,7 +2,8 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import redirect
-from api.service import add_url, get_random_alphanumeric_string, increase_count_tiny_url, is_valid_url
+from api.service import add_url, get_random_alphanumeric_string, \
+    add_tiny_url_to_request_collection, is_valid_url, count_url_usage
 import json
 
 
@@ -28,7 +29,14 @@ def create(request):
 @require_GET
 def redirect_short(request, tiny_id):
     try:
-        url = increase_count_tiny_url(tiny_id)
+        url = add_tiny_url_to_request_collection(tiny_id)
         return redirect(url)
     except Exception:
         return HttpResponseNotFound("Could not find redirect")
+
+
+# get count of usage in tiny_url
+@require_GET
+def num_clicks_tiny_url(request, tiny_id):
+    count_tiny_url_clicks = count_url_usage(tiny_id)
+    return HttpResponse(count_tiny_url_clicks)

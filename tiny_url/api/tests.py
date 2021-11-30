@@ -1,11 +1,11 @@
 from django.test import TestCase
-from api.models import TinyUrl
+from api.models import TinyUrl, TinyUrlRequest
 
 
 class ApiTest(TestCase):
 
     def setUp(self):
-        TinyUrl.objects.create(id="123", url="http://google.com", counter=0)
+        TinyUrl.objects.create(id="123", url="http://google.com")
 
     # Check use tiny url redirect to original url
     def test_redirect(self):
@@ -42,6 +42,19 @@ class ApiTest(TestCase):
         tiny_id = self.extract_id_from_url(url)
         tiny_url = TinyUrl.objects.get(id=tiny_id)
         self.assertEqual("http://amazon.com", tiny_url.url)
+
+    def test_counter_get_request_tiny_url(self):
+        response = self.client.post('/create', {"url": "https://github.com/neriaaa46/tiny_url_django"},
+                                    content_type="application/json")
+        url = response.content.decode("UTF-8")
+        tiny_id = self.extract_id_from_url(url)
+        for i in range(5000):
+            self.client.get('/s/' + tiny_id)
+        print('/numClicksTinyUrl/'+tiny_id)
+        response = self.client.get('/numClicksTinyUrl/' + tiny_id)
+        count = response.content.decode('utf-8')
+
+        self.assertEqual(int(count), 5000)
 
     def extract_id_from_url(self, url):
         return url.rpartition('/')[-1]

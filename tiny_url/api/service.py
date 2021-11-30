@@ -1,5 +1,6 @@
-from api.models import TinyUrl
+from api.models import TinyUrl, TinyUrlRequest
 from tiny_url.environment import URL, MIN_LEN_TINY_URL, MAX_LEN_TINY_URL
+from django.apps import apps
 import random
 import string
 import re
@@ -25,12 +26,16 @@ def get_random_alphanumeric_string(length):
     return result_str
 
 
-# Count the number of requests for a tiny URL
-def increase_count_tiny_url(tiny_id):
+# add TinyUrl to db for counting and return the original url to redirect
+def add_tiny_url_to_request_collection(tiny_id):
     tiny = TinyUrl.objects.get(id=tiny_id)
-    tiny.counter = tiny.counter + 1
-    tiny.save()
+    TinyUrlRequest.objects.create(tiny_url=tiny)
     return tiny.url
+
+
+def count_url_usage(tiny_id):
+    count_tiny_url_clicks = TinyUrlRequest.objects.filter(tiny_url_id=tiny_id).count()
+    return count_tiny_url_clicks
 
 
 # check valid url
