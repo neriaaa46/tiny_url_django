@@ -43,6 +43,7 @@ class ApiTest(TestCase):
         tiny_url = TinyUrl.objects.get(id=tiny_id)
         self.assertEqual("http://amazon.com", tiny_url.url)
 
+    # Check track of clicks tiny url
     def test_counter_get_request_tiny_url(self):
         response = self.client.post('/create', {"url": "https://github.com/neriaaa46/tiny_url_django"},
                                     content_type="application/json")
