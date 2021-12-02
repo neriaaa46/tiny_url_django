@@ -53,7 +53,7 @@ class ApiTest(TestCase):
         tiny_id = self.extract_id_from_url(url)
         for i in range(1000):
             self.client.get('/s/' + tiny_id)
-        response = self.client.get('/numClicksTinyUrl/' + tiny_id)
+        response = self.clienit.get('/numClicksTinyUrl/' + tiny_id)
         count = response.content.decode('utf-8')
 
         self.assertEqual(int(count), 1000)
